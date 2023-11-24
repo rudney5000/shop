@@ -1,6 +1,6 @@
-package com.shop.security.jwt
+package com.shop.config.jwt
 
-import com.shop.security.service.JwtService
+import com.shop.service.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

@@ -1,13 +1,11 @@
-package com.shop.security.service.impl
+package com.shop.service.impl
 
-import com.shop.security.auth.AuthenticationRequest
-import com.shop.security.auth.AuthenticationResponse
-import com.shop.security.auth.RegisterRequest
-import com.shop.security.entity.Role
-import com.shop.security.entity.User
-import com.shop.security.repository.UserRepository
-import com.shop.security.service.AuthenticationService
-import com.shop.security.service.JwtService
+import com.shop.dto.*
+import com.shop.entity.Role
+import com.shop.entity.User
+import com.shop.repository.UserRepository
+import com.shop.service.AuthenticationService
+import com.shop.service.JwtService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -21,15 +19,12 @@ class AuthenticationServiceImpl(
     private var authenticationManager: AuthenticationManager
 ): AuthenticationService {
     override fun register(request: RegisterRequest): AuthenticationResponse {
-        val user = User(
-            name = request.name,
-            password = passwordEncoder.encode(request.password),
-            email = request.email,
-            roles = Role.USER
-        )
+        val user:User = request.toUserEntity().also {
+            userObj:User -> userObj.password = passwordEncoder.encode(request.password)
+        }
 
         repository.save(user)
-        val jwtToken = jwtService.generateToken(user)
+        val jwtToken = jwtService.generateToken(user.toUserAuth())
         return AuthenticationResponse(jwtToken)
     }
 
@@ -42,7 +37,7 @@ class AuthenticationServiceImpl(
         )
 
         val user = repository.findByEmail(request.email).orElseThrow()
-        val jwtToken = jwtService.generateToken(user)
+        val jwtToken = jwtService.generateToken(user.toUserAuth())
         return AuthenticationResponse(jwtToken)
     }
 

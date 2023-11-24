@@ -1,6 +1,7 @@
-package com.shop.security.config
+package com.shop.config
 
-import com.shop.security.repository.UserRepository
+import com.shop.dto.toUserAuth
+import com.shop.repository.UserRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -24,7 +25,7 @@ class ApplicationConfig(
     fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
             repository.findByEmail(username)
-                .orElseThrow { UsernameNotFoundException("User not found") }
+                .orElseThrow { UsernameNotFoundException("User not found") }.toUserAuth()
         }
     }
 

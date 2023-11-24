@@ -1,20 +1,15 @@
-package com.shop.security.entity
+package com.shop.dto
 
-import jakarta.persistence.*
+import com.shop.entity.Role
+import com.shop.entity.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-@Entity
-@Table(name = "users")
-data class User (
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+data class UserAuth(
     var name: String,
     private var password: String,
     var email: String,
-    @Enumerated(EnumType.STRING)
     var roles: Role
 ):UserDetails{
     override fun getAuthorities() = listOf(SimpleGrantedAuthority(roles.name))
@@ -31,3 +26,17 @@ data class User (
 
     override fun isEnabled() = true
 }
+
+fun UserAuth.toUserEntity():User = User(
+    name = this.name,
+    email = this.email,
+    password = this.password,
+    roles = this.roles
+)
+
+fun User.toUserAuth():UserAuth = UserAuth(
+    name = this.name,
+    email = this.email,
+    password = this.password,
+    roles = this.roles
+)

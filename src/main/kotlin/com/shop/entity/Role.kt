@@ -1,4 +1,4 @@
-package com.shop.security.entity
+package com.shop.entity
 
 enum class Role {
     USER,

@@ -1,6 +1,7 @@
-package com.shop.security.config
+package com.shop.config
 
-import com.shop.security.jwt.JwtAuthenticationFilter
+
+import com.shop.config.jwt.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -25,7 +26,7 @@ class SecurityConfig(
             .disable()
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers("/api/v1/users/**")
+                    .requestMatchers("/users/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated()

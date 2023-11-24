@@ -1,4 +1,4 @@
-package com.shop.security.auth
+package com.shop.dto
 
 data class AuthenticationRequest(
     var email: String,

@@ -1,9 +1,9 @@
-package com.shop.security.controller
+package com.shop.controller
 
-import com.shop.security.auth.AuthenticationRequest
-import com.shop.security.auth.AuthenticationResponse
-import com.shop.security.auth.RegisterRequest
-import com.shop.security.service.AuthenticationService
+import com.shop.dto.AuthenticationRequest
+import com.shop.dto.AuthenticationResponse
+import com.shop.dto.RegisterRequest
+import com.shop.service.AuthenticationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 class AuthenticationController(
     private val authenticationService: AuthenticationService
 ) {
