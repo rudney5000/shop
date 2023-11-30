@@ -9,10 +9,20 @@ data class User (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null,
+
     var name: String,
+
     @JsonIgnore
     var password: String,
+
     var email: String,
+
     @Enumerated(EnumType.STRING)
-    var roles: Role
+    var roles: Role,
+
+    @OneToMany(
+        cascade =[CascadeType.ALL],
+        mappedBy = "user"
+    )
+    var companies: MutableList<Company> = mutableListOf(),
 )
