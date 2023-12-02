@@ -10,6 +10,7 @@ import com.shop.mapper.CompanyMapper
 import com.shop.repository.CompanyRepository
 import com.shop.repository.UserRepository
 import com.shop.service.CompanyService
+import com.shop.utils.Mapper
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -94,24 +95,51 @@ class CompanyServiceImpl(
 
 
 
-//    override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyDto>> {
-//        val existingCompany = getOneCompany(id)
-//        if (existingCompany.isPresent) {
-//            val company = Company(
-//                id = 0,
-//                description = companyRequest.description,
-//                phone = companyRequest.phone,
-//                address = companyRequest.address,
-//                name = companyRequest.name,
-//                ref = companyRequest.ref,
-//                email = companyRequest.email,
-//                userId = companyRequest.userId,
-//                user =
-//            )
-//
-//            val updateCompany =companyRepository.save(company)
-//        }
-//    }
+    override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyDto>> {
+        val existingCompany = getOneCompany(id)
+        if (existingCompany.isPresent) {
+            val existsCompany = existingCompany.get()
+            val company = Mapper.mapper(existsCompany.data, Company::class.java)
+
+            company.description = companyRequest.description
+            company.phone = companyRequest.phone
+            company.address = companyRequest.address
+            company.name = companyRequest.name
+            company.ref = companyRequest.ref
+            company.email = companyRequest.email
+            company.userId = companyRequest.userId
+
+            val updateCompany = companyRepository.save(company)
+
+            val companyDto = CompanyDto(
+                description = updateCompany.description,
+                phone = updateCompany.phone,
+                address = updateCompany.address,
+                name = updateCompany.name,
+                ref = updateCompany.ref,
+                email = updateCompany.email,
+                userId = updateCompany.userId
+            )
+
+            return Optional.of(ResponseDto(
+                code = 200,
+                message = "OK",
+                data = companyDto
+            ))
+        }else {
+            return Optional.of(
+                ResponseDto(
+                    code = 400,
+                    message = "Invalid userId: ${companyRequest.userId}",
+                    error = ResponseError(
+                        code = 400,
+                        message = "Not Found userId: ${companyRequest.userId}"
+                    ),
+                    data = null
+                )
+            )
+        }
+    }
 
     override fun deleteCompany(id: Long) {
         if (companyRepository.existsById(id)){

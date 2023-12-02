@@ -11,7 +11,7 @@ interface CompanyService {
 
     fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto>
 
-//    fun updateCompany(id: Long, companyRequest: CompanyRequest):Optional<ResponseDto<CompanyDto>>
+    fun updateCompany(id: Long, companyRequest: CompanyRequest):Optional<ResponseDto<CompanyDto>>
 
     fun deleteCompany(id: Long)
 }
