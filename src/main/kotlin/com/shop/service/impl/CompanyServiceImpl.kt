@@ -1,12 +1,11 @@
 package com.shop.service.impl
 
-import com.shop.dto.CompanyRequest
-import com.shop.dto.CompanyDto
-import com.shop.dto.ResponseDto
-import com.shop.dto.ResponseError
+import com.shop.dto.*
+import com.shop.entity.ActivityArea
 import com.shop.entity.Company
 import com.shop.entity.User
 import com.shop.mapper.CompanyMapper
+import com.shop.repository.ActivityAreaRepository
 import com.shop.repository.CompanyRepository
 import com.shop.repository.UserRepository
 import com.shop.service.CompanyService
@@ -18,6 +17,8 @@ import java.util.*
 class CompanyServiceImpl(
     private val companyRepository: CompanyRepository,
     private val userRepository: UserRepository,
+//    private val activityAreaRequest: ActivityAreaRequest,
+    private val activityAreaRepository: ActivityAreaRepository
 //    private val companyMapper: CompanyMapper
 ): CompanyService {
     override fun getOneCompany(id: Long): Optional<ResponseDto<CompanyDto>> {
@@ -30,7 +31,8 @@ class CompanyServiceImpl(
                 name = comp.name,
                 ref = comp.ref,
                 email = comp.email,
-                userId = comp.userId
+                userId = comp.userId,
+                activityAreas = comp.activityAreas
             )
             ResponseDto(
                 code = 200,
@@ -53,6 +55,17 @@ class CompanyServiceImpl(
                 data = null
             )
 
+        val activityAreas = HashSet<ActivityArea>()
+
+        for (activityAreaRequest in companyRequest.activityAreas) {
+            val activityArea = activityAreaRepository.findByName(activityAreaRequest.name)
+                ?: ActivityArea(
+                    id = 0,
+                    name = activityAreaRequest.name
+                )
+            activityAreas.add(activityArea)
+        }
+
         val company = Company(
             id = 0,
             description = companyRequest.description,
@@ -62,7 +75,8 @@ class CompanyServiceImpl(
             ref = companyRequest.ref,
             email = companyRequest.email,
             userId = companyRequest.userId,
-            user = user
+            user = user,
+            activityAreas = companyRequest.activityAreas
         )
         val savedCompany = companyRepository.save(company)
 
@@ -73,7 +87,8 @@ class CompanyServiceImpl(
             name = savedCompany.name,
             ref = savedCompany.ref,
             email = savedCompany.email,
-            userId = savedCompany.userId
+            userId = savedCompany.userId,
+            activityAreas = savedCompany.activityAreas
         )
 
         return ResponseDto(
@@ -108,6 +123,7 @@ class CompanyServiceImpl(
             company.ref = companyRequest.ref
             company.email = companyRequest.email
             company.userId = companyRequest.userId
+            company.activityAreas = companyRequest.activityAreas
 
             val updateCompany = companyRepository.save(company)
 
@@ -118,7 +134,8 @@ class CompanyServiceImpl(
                 name = updateCompany.name,
                 ref = updateCompany.ref,
                 email = updateCompany.email,
-                userId = updateCompany.userId
+                userId = updateCompany.userId,
+                activityAreas = updateCompany.activityAreas
             )
 
             return Optional.of(ResponseDto(

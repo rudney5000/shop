@@ -21,5 +21,13 @@ data class Company(
     @ManyToOne
     @JoinColumn(insertable = false, updatable = false)
     @JsonIgnore
-    var user: User
+    var user: User,
+
+    @ManyToMany
+    @JoinTable(
+        name = "ActivityArea_Company",
+        joinColumns = [JoinColumn(name = "activity_area_id")],
+        inverseJoinColumns = [JoinColumn(name = "company_id")]
+    )
+    var activityAreas: MutableSet<ActivityArea> = mutableSetOf()
 )

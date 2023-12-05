@@ -1,7 +1,6 @@
 package com.shop.service.impl
 
 import com.shop.dto.*
-import com.shop.entity.Role
 import com.shop.entity.User
 import com.shop.repository.UserRepository
 import com.shop.service.AuthenticationService
