@@ -6,7 +6,7 @@ import jakarta.persistence.*
 data class ActivityArea(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long,
+    var id: Long? = null,
     var name: String,
 
     @ManyToMany(
