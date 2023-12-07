@@ -11,17 +11,5 @@ data class ActivityAreaRequest(
 fun ActivityArea.toActivityAreaRequest():ActivityAreaRequest =
     ActivityAreaRequest(
         name,
-        companies.map {
-            Company(
-                it.id,
-                it.description,
-                it.phone,
-                it.address,
-                it.name,
-                it.ref,
-                it.email,
-                it.userId,
-                it.user
-            )
-        }.toMutableList()
+        companies.toMutableList()
     )
