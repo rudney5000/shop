@@ -42,8 +42,73 @@ class CompanyServiceImpl(
         }
     }
 
-    override fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto> {
+//    override fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto> {
+//
+//        val user = userRepository.findById(companyRequest.userId).orElse(null)
+//            ?: return ResponseDto(
+//                code = 400,
+//                message = "Invalid userId: ${companyRequest.userId}",
+//                error = ResponseError(
+//                    code = 400,
+//                    message = "Not Found userId: ${companyRequest.userId}"
+//                ),
+//                data = null
+//            )
+//
+//        val activityAreas = HashSet<ActivityArea>()
+//
+//        for (activityAreaRequest in companyRequest.activityAreas) {
+//            val activityArea = activityAreaRepository.findByName(activityAreaRequest.name)
+//                ?: ActivityArea(
+//                    id = 0,
+//                    name = activityAreaRequest.name
+//                )
+//            activityAreas.add(activityArea)
+//        }
+//
+//        val company = Company(
+//            id = 0,
+//            description = companyRequest.description,
+//            phone = companyRequest.phone,
+//            address = companyRequest.address,
+//            name = companyRequest.name,
+//            ref = companyRequest.ref,
+//            email = companyRequest.email,
+//            userId = companyRequest.userId,
+//            user = user,
+//            activityAreas = companyRequest.activityAreas
+//        )
+//        val savedCompany = companyRepository.save(company)
+//
+//        val companyDto = CompanyDto(
+//            description = savedCompany.description,
+//            phone = savedCompany.phone,
+//            address = savedCompany.address,
+//            name = savedCompany.name,
+//            ref = savedCompany.ref,
+//            email = savedCompany.email,
+//            userId = savedCompany.userId,
+//            activityAreas = savedCompany.activityAreas
+//        )
+//
+//        return ResponseDto(
+//            code = 200,
+//            message = "OK",
+//            data = companyDto
+//        )
+////        val company = companyMapper.toEntity(companyRequest)
+//
+////        val savedCompany = companyRepository.save(company)
+////        val companyDto = companyMapper.toDto(savedCompany)
+////        return ResponseDto(
+////            code = 200,
+////            message = "OK",
+////            data = companyDto
+////        )
+//
+//    }
 
+    override fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto> {
         val user = userRepository.findById(companyRequest.userId).orElse(null)
             ?: return ResponseDto(
                 code = 400,
@@ -55,16 +120,12 @@ class CompanyServiceImpl(
                 data = null
             )
 
-        val activityAreas = HashSet<ActivityArea>()
-
-        for (activityAreaRequest in companyRequest.activityAreas) {
-            val activityArea = activityAreaRepository.findByName(activityAreaRequest.name)
-                ?: ActivityArea(
-                    id = 0,
-                    name = activityAreaRequest.name
-                )
-            activityAreas.add(activityArea)
-        }
+        val activityAreas = companyRequest.activityAreas.map {
+            ActivityArea(
+                id = it.id,
+                name = it.name
+            )
+        }.toMutableSet()
 
         val company = Company(
             id = 0,
@@ -75,9 +136,10 @@ class CompanyServiceImpl(
             ref = companyRequest.ref,
             email = companyRequest.email,
             userId = companyRequest.userId,
-            user = user,
-            activityAreas = companyRequest.activityAreas
+            users = user,
+            activityAreas = activityAreas
         )
+
         val savedCompany = companyRepository.save(company)
 
         val companyDto = CompanyDto(
@@ -90,27 +152,17 @@ class CompanyServiceImpl(
             userId = savedCompany.userId,
             activityAreas = savedCompany.activityAreas
         )
-
         return ResponseDto(
             code = 200,
             message = "OK",
+            error = null,
             data = companyDto
         )
-//        val company = companyMapper.toEntity(companyRequest)
-
-//        val savedCompany = companyRepository.save(company)
-//        val companyDto = companyMapper.toDto(savedCompany)
-//        return ResponseDto(
-//            code = 200,
-//            message = "OK",
-//            data = companyDto
-//        )
-
     }
 
 
 
-    override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyDto>> {
+        override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyDto>> {
         val existingCompany = getOneCompany(id)
         if (existingCompany.isPresent) {
             val existsCompany = existingCompany.get()

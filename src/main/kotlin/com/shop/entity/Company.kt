@@ -2,12 +2,15 @@ package com.shop.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import java.sql.Timestamp
 
 @Entity
+@Table(name = "_companies")
 data class Company(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long,
+    var id: Long? = null,
     var description: String,
     var phone: String,
     var address: String,
@@ -19,9 +22,9 @@ data class Company(
     var userId: Long,
 
     @ManyToOne
-    @JoinColumn(insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    var user: User,
+    var users: User,
 
     @ManyToMany
     @JoinTable(
@@ -29,5 +32,8 @@ data class Company(
         joinColumns = [JoinColumn(name = "activity_area_id")],
         inverseJoinColumns = [JoinColumn(name = "company_id")]
     )
-    var activityAreas: MutableSet<ActivityArea> = mutableSetOf()
+    var activityAreas: MutableSet<ActivityArea> = mutableSetOf(),
+
+    @CreationTimestamp
+    var created: Timestamp? = null,
 )

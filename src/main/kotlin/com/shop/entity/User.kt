@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "users")
+@Table(name = "_users")
 data class User (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,8 +21,9 @@ data class User (
     var roles: Role,
 
     @OneToMany(
+        mappedBy = "users",
         cascade =[CascadeType.ALL],
-        mappedBy = "user"
+        fetch = FetchType.EAGER
     )
     var companies: MutableList<Company> = mutableListOf(),
 )

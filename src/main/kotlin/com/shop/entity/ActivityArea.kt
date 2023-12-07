@@ -1,6 +1,8 @@
 package com.shop.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import java.sql.Timestamp
 
 @Entity
 data class ActivityArea(
@@ -12,5 +14,8 @@ data class ActivityArea(
     @ManyToMany(
         mappedBy = "activityAreas"
     )
-    var companies: MutableList<Company> = mutableListOf()
+    var companies: MutableList<Company> = mutableListOf(),
+
+    @CreationTimestamp
+    var created: Timestamp? = null,
 )

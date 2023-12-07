@@ -14,19 +14,19 @@ data class CompanyRequest(
     var activityAreas: MutableSet<ActivityArea> = mutableSetOf()
 )
 
-fun Company.toCompanyRequest() =
+fun Company.toCompanyRequest(): CompanyRequest =
     CompanyRequest(
-        description,
-        phone,
-        address,
-        name,
-        ref,
-        email,
-        userId,
-        activityAreas.map {
+        description = this.description,
+        phone = this.phone,
+        address = this.address,
+        name = this.name,
+        ref = this.ref,
+        email = this.email,
+        userId = this.userId,
+        activityAreas = this.activityAreas.map {
             ActivityArea(
-                it.id,
-                it.name
+                id = it.id,
+                name = it.name
             )
         }.toMutableSet()
     )

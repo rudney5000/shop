@@ -10,6 +10,6 @@ data class ActivityAreaRequest(
 
 fun ActivityArea.toActivityAreaRequest():ActivityAreaRequest =
     ActivityAreaRequest(
-        name,
-        companies.toMutableList()
+        name = this.name,
+        companies = this.companies.toMutableList()
     )
