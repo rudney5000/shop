@@ -1,11 +1,9 @@
 package com.shop.controller
 
-import com.shop.dto.CompanyDto
 import com.shop.dto.CompanyRequest
 import com.shop.dto.ResponseDto
 import com.shop.service.CompanyService
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,20 +21,25 @@ class CompanyController(
     private val companyService: CompanyService
 ) {
 
+    @GetMapping
+    fun getAllCompanies(): ResponseEntity<ResponseDto<List<CompanyRequest>>>{
+        return ResponseEntity.ok(companyService.getAllCompanies())
+    }
+
     @GetMapping("/{id}")
-    fun getOneCompany(@PathVariable id: Long): ResponseEntity<Optional<ResponseDto<CompanyDto>>>{
+    fun getOneCompany(@PathVariable id: Long): ResponseEntity<Optional<ResponseDto<CompanyRequest>>>{
         val company = companyService.getOneCompany(id)
         return ResponseEntity.ok(company)
     }
 
     @PostMapping
-    fun createCompany(@Valid @RequestBody companyRequest: CompanyRequest): ResponseDto<CompanyDto> {
-        return companyService.createCompany(companyRequest)
+    fun createCompany(@Valid @RequestBody companyRequest: CompanyRequest): ResponseEntity<ResponseDto<CompanyRequest>> {
+        return ResponseEntity.ok(companyService.createCompany(companyRequest))
 
     }
 
     @PutMapping("/{id}")
-    fun updateCompany(@PathVariable id: Long, @Valid @RequestBody companyRequest: CompanyRequest): ResponseEntity<Optional<ResponseDto<CompanyDto>>> {
+    fun updateCompany(@PathVariable id: Long, @Valid @RequestBody companyRequest: CompanyRequest): ResponseEntity<Optional<ResponseDto<CompanyRequest>>> {
         val companyUpdate = companyService.updateCompany(id, companyRequest)
         return ResponseEntity.ok(companyUpdate)
     }

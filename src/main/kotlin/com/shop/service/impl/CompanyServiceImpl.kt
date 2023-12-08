@@ -21,10 +21,32 @@ class CompanyServiceImpl(
     private val activityAreaRepository: ActivityAreaRepository
 //    private val companyMapper: CompanyMapper
 ): CompanyService {
-    override fun getOneCompany(id: Long): Optional<ResponseDto<CompanyDto>> {
+    override fun getAllCompanies(): ResponseDto<List<CompanyRequest>> {
+        val companies = companyRepository.findAll()
+
+        val companyList = companies.map {
+                companies -> CompanyRequest(
+            description = companies.description,
+            phone = companies.phone,
+            address = companies.address,
+            name = companies.name,
+            ref = companies.ref,
+            email = companies.email,
+            userId = companies.userId
+        )
+        }
+        return ResponseDto(
+            code = 200,
+            message = "OK",
+            error = null,
+            data = companyList
+        )
+    }
+
+    override fun getOneCompany(id: Long): Optional<ResponseDto<CompanyRequest>> {
         val company =companyRepository.findById(id)
         return company.map { comp ->
-            val companyDto = CompanyDto(
+            val companyDto = CompanyRequest(
                 description =comp.description,
                 phone = comp.phone,
                 address = comp.address,
@@ -108,7 +130,7 @@ class CompanyServiceImpl(
 //
 //    }
 
-    override fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto> {
+    override fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyRequest> {
         val user = userRepository.findById(companyRequest.userId).orElse(null)
             ?: return ResponseDto(
                 code = 400,
@@ -142,7 +164,7 @@ class CompanyServiceImpl(
 
         val savedCompany = companyRepository.save(company)
 
-        val companyDto = CompanyDto(
+        val companyDto = CompanyRequest(
             description = savedCompany.description,
             phone = savedCompany.phone,
             address = savedCompany.address,
@@ -160,9 +182,7 @@ class CompanyServiceImpl(
         )
     }
 
-
-
-        override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyDto>> {
+        override fun updateCompany(id: Long, companyRequest: CompanyRequest): Optional<ResponseDto<CompanyRequest>> {
         val existingCompany = getOneCompany(id)
         if (existingCompany.isPresent) {
             val existsCompany = existingCompany.get()
@@ -179,7 +199,7 @@ class CompanyServiceImpl(
 
             val updateCompany = companyRepository.save(company)
 
-            val companyDto = CompanyDto(
+            val companyDto = CompanyRequest(
                 description = updateCompany.description,
                 phone = updateCompany.phone,
                 address = updateCompany.address,

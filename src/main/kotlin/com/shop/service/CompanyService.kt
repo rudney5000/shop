@@ -1,17 +1,18 @@
 package com.shop.service
 
-import com.shop.dto.CompanyDto
 import com.shop.dto.CompanyRequest
 import com.shop.dto.ResponseDto
 import java.util.Optional
 
 interface CompanyService {
 
-    fun getOneCompany(id: Long): Optional<ResponseDto<CompanyDto>>
+    fun getAllCompanies(): ResponseDto<List<CompanyRequest>>
 
-    fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyDto>
+    fun getOneCompany(id: Long): Optional<ResponseDto<CompanyRequest>>
 
-    fun updateCompany(id: Long, companyRequest: CompanyRequest):Optional<ResponseDto<CompanyDto>>
+    fun createCompany(companyRequest: CompanyRequest): ResponseDto<CompanyRequest>
+
+    fun updateCompany(id: Long, companyRequest: CompanyRequest):Optional<ResponseDto<CompanyRequest>>
 
     fun deleteCompany(id: Long)
 }
