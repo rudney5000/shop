@@ -14,8 +14,9 @@ data class Country(
     var name:String,
 
     @OneToMany(
+        mappedBy = "countries",
         cascade =[CascadeType.ALL],
-        mappedBy = "countries"
+        fetch = FetchType.EAGER
     )
     var cities: MutableList<City> = mutableListOf(),
 

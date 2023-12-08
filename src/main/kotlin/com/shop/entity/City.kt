@@ -17,7 +17,7 @@ data class City(
     var countryId: Long,
 
     @ManyToOne
-    @JoinColumn(insertable = false, updatable = false)
+    @JoinColumn(name = "country_id")
     @JsonIgnore
     var countries: Country?,
 
