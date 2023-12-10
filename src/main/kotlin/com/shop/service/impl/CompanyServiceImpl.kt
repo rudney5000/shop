@@ -2,6 +2,7 @@ package com.shop.service.impl
 
 import com.shop.dto.*
 import com.shop.entity.ActivityArea
+import com.shop.entity.City
 import com.shop.entity.Company
 import com.shop.entity.User
 import com.shop.mapper.CompanyMapper
@@ -9,38 +10,63 @@ import com.shop.repository.ActivityAreaRepository
 import com.shop.repository.CompanyRepository
 import com.shop.repository.UserRepository
 import com.shop.service.CompanyService
+import com.shop.utils.CustomPage
 import com.shop.utils.Mapper
+import com.shop.utils.Pageable
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class CompanyServiceImpl(
+    @Value("12")
+    private var pageSize: Int = 0,
     private val companyRepository: CompanyRepository,
     private val userRepository: UserRepository,
 //    private val activityAreaRequest: ActivityAreaRequest,
-    private val activityAreaRepository: ActivityAreaRepository
+    private val activityAreaRepository: ActivityAreaRepository,
 //    private val companyMapper: CompanyMapper
 ): CompanyService {
-    override fun getAllCompanies(): ResponseDto<List<CompanyRequest>> {
+    override fun getAllCompanies(
+        size: Optional<Int?>?,
+        page: Optional<Int?>?,
+        sort: Optional<String?>?,
+        filter: String?
+    ): List<ResponseDto<Pageable<CompanyRequest>>> {
         val companies = companyRepository.findAll()
 
         val companyList = companies.map {
-                companies -> CompanyRequest(
-            description = companies.description,
-            phone = companies.phone,
-            address = companies.address,
-            name = companies.name,
-            ref = companies.ref,
-            email = companies.email,
-            userId = companies.userId
-        )
+            companies -> CompanyRequest(
+                description = companies.description,
+                phone = companies.phone,
+                address = companies.address,
+                name = companies.name,
+                ref = companies.ref,
+                email = companies.email,
+                userId = companies.userId,
+                cities = companies.cities
+            )
         }
-        return ResponseDto(
+
+        val customPageableCompany = CustomPage.CustomPageable(
+            pageNumber = page?.orElse(0) ?: 0,
+            pageSize = size?.orElse(pageSize) ?: pageSize,
+            totalPages = 1,
+            totalElements =  companies.size.toLong(),
+            empty = companies.isEmpty()
+        )
+
+        val pageable = Pageable(
+            pageable = customPageableCompany,
+            data = companyList
+        )
+        val responseDto = ResponseDto(
             code = 200,
             message = "OK",
             error = null,
-            data = companyList
+            data = pageable
         )
+        return listOf(responseDto)
     }
 
     override fun getOneCompany(id: Long): Optional<ResponseDto<CompanyRequest>> {
@@ -54,7 +80,8 @@ class CompanyServiceImpl(
                 ref = comp.ref,
                 email = comp.email,
                 userId = comp.userId,
-                activityAreas = comp.activityAreas
+                activityAreas = comp.activityAreas,
+                cities = comp.cities
             )
             ResponseDto(
                 code = 200,
@@ -149,6 +176,15 @@ class CompanyServiceImpl(
             )
         }.toMutableSet()
 
+        val cities = companyRequest.cities.map {
+            City(
+                id = it.id,
+                name = it.name,
+                countryId = it.countryId,
+                countries = it.countries
+            )
+        }
+
         val company = Company(
             id = 0,
             description = companyRequest.description,
@@ -159,7 +195,8 @@ class CompanyServiceImpl(
             email = companyRequest.email,
             userId = companyRequest.userId,
             users = user,
-            activityAreas = activityAreas
+            activityAreas = activityAreas,
+            cities = cities.toMutableSet()
         )
 
         val savedCompany = companyRepository.save(company)
@@ -172,7 +209,8 @@ class CompanyServiceImpl(
             ref = savedCompany.ref,
             email = savedCompany.email,
             userId = savedCompany.userId,
-            activityAreas = savedCompany.activityAreas
+            activityAreas = savedCompany.activityAreas,
+            cities = savedCompany.cities
         )
         return ResponseDto(
             code = 200,
@@ -196,6 +234,7 @@ class CompanyServiceImpl(
             company.email = companyRequest.email
             company.userId = companyRequest.userId
             company.activityAreas = companyRequest.activityAreas
+            company.cities = companyRequest.cities
 
             val updateCompany = companyRepository.save(company)
 
@@ -207,7 +246,8 @@ class CompanyServiceImpl(
                 ref = updateCompany.ref,
                 email = updateCompany.email,
                 userId = updateCompany.userId,
-                activityAreas = updateCompany.activityAreas
+                activityAreas = updateCompany.activityAreas,
+                cities = updateCompany.cities
             )
 
             return Optional.of(ResponseDto(

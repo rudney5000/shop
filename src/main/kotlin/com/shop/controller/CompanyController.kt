@@ -3,6 +3,7 @@ package com.shop.controller
 import com.shop.dto.CompanyRequest
 import com.shop.dto.ResponseDto
 import com.shop.service.CompanyService
+import com.shop.utils.Pageable
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,8 +23,13 @@ class CompanyController(
 ) {
 
     @GetMapping
-    fun getAllCompanies(): ResponseEntity<ResponseDto<List<CompanyRequest>>>{
-        return ResponseEntity.ok(companyService.getAllCompanies())
+    fun getAllCompanies(
+        size: Optional<Int?>?,
+        page: Optional<Int?>?,
+        sort: Optional<String?>?,
+        filter: String?
+    ): ResponseEntity<List<ResponseDto<Pageable<CompanyRequest>>>>{
+        return ResponseEntity.ok(companyService.getAllCompanies(size, page, sort, filter))
     }
 
     @GetMapping("/{id}")

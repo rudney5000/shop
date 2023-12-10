@@ -34,6 +34,14 @@ data class Company(
     )
     var activityAreas: MutableSet<ActivityArea> = mutableSetOf(),
 
+    @ManyToMany
+    @JoinTable(
+        name = "City_Company",
+        joinColumns = [JoinColumn(name = "city_id")],
+        inverseJoinColumns = [JoinColumn(name = "company_id")]
+    )
+    var cities: MutableSet<City> = mutableSetOf(),
+
     @CreationTimestamp
     var created: Timestamp? = null,
 )

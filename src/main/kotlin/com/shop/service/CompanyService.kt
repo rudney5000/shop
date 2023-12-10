@@ -2,11 +2,17 @@ package com.shop.service
 
 import com.shop.dto.CompanyRequest
 import com.shop.dto.ResponseDto
+import com.shop.utils.Pageable
 import java.util.Optional
 
 interface CompanyService {
 
-    fun getAllCompanies(): ResponseDto<List<CompanyRequest>>
+    fun getAllCompanies(
+        size: Optional<Int?>?,
+        page: Optional<Int?>?,
+        sort: Optional<String?>?,
+        filter: String?
+    ): List<ResponseDto<Pageable<CompanyRequest>>>
 
     fun getOneCompany(id: Long): Optional<ResponseDto<CompanyRequest>>
 
