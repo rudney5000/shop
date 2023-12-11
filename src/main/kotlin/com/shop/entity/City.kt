@@ -21,6 +21,11 @@ data class City(
     @JsonIgnore
     var countries: Country?,
 
+    @ManyToMany(
+        mappedBy = "cities"
+    )
+    var companies: MutableList<Company> = mutableListOf(),
+
     @CreationTimestamp
     var createdAt: Timestamp?=null,
 
